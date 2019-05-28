@@ -51,9 +51,9 @@
             <artifactId>gexin-rp-sdk-http</artifactId>
             <version>4.1.0.1</version>
         </dependency>
-        <dependency>
+        <!--<dependency>
             <groupId>com.acooly</groupId>
             <artifactId>acooly-component-app</artifactId>
-        </dependency>
+        </dependency>-->
     </dependencies>
 </project>
