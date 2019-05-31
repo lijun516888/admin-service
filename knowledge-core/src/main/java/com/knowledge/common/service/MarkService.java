@@ -1,7 +1,7 @@
 package com.knowledge.common.service;
 
-public interface MarkService {
+public interface MarkService<T extends WaterMark> {
 
-    String waterMark();
+    String making(byte[] source, T waterMark);
 
 }
