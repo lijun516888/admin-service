@@ -63,6 +63,21 @@ public class MobileWorkRecordController extends MobileBaseController {
         menu1.put("meta", menuMeta);
         menu1.put("children", this.bindChildren());
         jsonArray.add(menu1);
+
+
+        JSONObject menu2 = new JSONObject();
+        JSONObject menuMeta2 = new JSONObject();
+        menu2.put("alwaysShow", true);
+        menu2.put("component", "layout/Layout");
+        menu2.put("hidden", false);
+        menu2.put("name", "oa");
+        menu2.put("path", "/manage");
+        menuMeta2.put("icon", "component");
+        menuMeta2.put("noCache", "false");
+        menuMeta2.put("title", "OA办公");
+        menu2.put("meta", menuMeta2);
+        menu2.put("children", this.bindOAChildren());
+        jsonArray.add(menu2);
         jsonObj.put("access", jsonArray);
 
         result.put("code", 10000);
@@ -96,6 +111,68 @@ public class MobileWorkRecordController extends MobileBaseController {
         jsonArray.add(row1);
         data.put("data", jsonArray);
         data.put("total", 1);
+
+        result.put("code", 10000);
+        result.put("status", 1);
+        result.put("msg", "");
+        result.put("data", data);
+        return result;
+    }
+
+
+    @RequestMapping(value = "/mobile/oa/task")
+    public JSONObject taskListJson(HttpServletRequest request) {
+        JSONObject result = new JSONObject();
+        JSONArray jsonArray = new JSONArray();
+        JSONObject row1 = new JSONObject();
+        row1.put("id", "1");
+        row1.put("branch", "开发部"); // 开发部，设计部，运维部，测试部，财务部
+        // 开发部：需求分析，概要设计，详细设计，功能开发，问题修改，系统维护
+        // 设计部：
+        row1.put("category", "需求分析");
+        row1.put("taskTitle", "请假");
+        row1.put("taskDesc", "任务描述");
+        row1.put("taskCreator", "李军");
+        row1.put("taskCreateTime", "2019-06-01");
+
+
+        JSONObject row2 = new JSONObject();
+        row2.put("id", "2");
+        row2.put("branch", "开发部"); // 开发部，设计部，运维部，测试部，财务部
+        row2.put("category", "需求分析");
+        row2.put("taskTitle", "请假");
+        row2.put("taskDesc", "任务描述");
+        row2.put("taskCreator", "李军");
+        row2.put("taskCreateTime", "2019-06-01");
+
+
+        JSONObject data = new JSONObject();
+        jsonArray.add(row1);
+        jsonArray.add(row2);
+        jsonArray.add(row2);
+        jsonArray.add(row2);
+        jsonArray.add(row2);
+        jsonArray.add(row2);
+        jsonArray.add(row2);
+        jsonArray.add(row2);
+        jsonArray.add(row2);
+        jsonArray.add(row2);
+        jsonArray.add(row2);
+        jsonArray.add(row2);
+        jsonArray.add(row2);
+        jsonArray.add(row2);
+        jsonArray.add(row2);
+        jsonArray.add(row2);
+        jsonArray.add(row2);
+        jsonArray.add(row2);
+        jsonArray.add(row2);
+        jsonArray.add(row2);
+        jsonArray.add(row2);
+        jsonArray.add(row2);
+        jsonArray.add(row2);
+        jsonArray.add(row2);
+        data.put("data", jsonArray);
+        data.put("total", 14);
 
         result.put("code", 10000);
         result.put("status", 1);
@@ -166,6 +243,26 @@ public class MobileWorkRecordController extends MobileBaseController {
 
         jsonArray.add(jsonObject1);
         jsonArray.add(jsonObject2);
+        return jsonArray;
+    }
+
+    private JSONArray bindOAChildren() {
+        JSONArray jsonArray = new JSONArray();
+
+        JSONObject jsonObject1 = new JSONObject();
+        JSONObject jsonObjectMeta1 = new JSONObject();
+        jsonObject1.put("alwaysShow", false);
+        jsonObject1.put("component", "manage/oa/task");
+        jsonObject1.put("hidden", false);
+        jsonObject1.put("alwaysShow", false);
+        jsonObject1.put("name", "oaTask");
+        jsonObject1.put("path", "oatask");
+        jsonObjectMeta1.put("icon", "user");
+        jsonObjectMeta1.put("noCache", false);
+        jsonObjectMeta1.put("title", "计划管理");
+        jsonObject1.put("meta", jsonObjectMeta1);
+
+        jsonArray.add(jsonObject1);
         return jsonArray;
     }
 
