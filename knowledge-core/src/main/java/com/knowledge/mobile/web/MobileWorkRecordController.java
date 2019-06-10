@@ -252,11 +252,11 @@ public class MobileWorkRecordController extends MobileBaseController {
         JSONObject jsonObject1 = new JSONObject();
         JSONObject jsonObjectMeta1 = new JSONObject();
         jsonObject1.put("alwaysShow", false);
-        jsonObject1.put("component", "manage/oa/task");
+        jsonObject1.put("component", "manage/oa/plan");
         jsonObject1.put("hidden", false);
         jsonObject1.put("alwaysShow", false);
-        jsonObject1.put("name", "oaTask");
-        jsonObject1.put("path", "oatask");
+        jsonObject1.put("name", "oaPlan");
+        jsonObject1.put("path", "oa/plan");
         jsonObjectMeta1.put("icon", "user");
         jsonObjectMeta1.put("noCache", false);
         jsonObjectMeta1.put("title", "计划管理");
