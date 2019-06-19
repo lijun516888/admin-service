@@ -6,6 +6,6 @@ public class SystemEventListener extends AbstractEventListener<SystemEvent> {
 
     @Override
     public void onTriggerEvent(SystemEvent event) {
-
+        System.out.println("SystemEventListener");
     }
 }

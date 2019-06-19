@@ -11,7 +11,7 @@ public class PublisherMulticaster {
     public static void main(String[] args) {
         PublisherMulticaster publisherMulticaster = new PublisherMulticaster();
         SystemEventListener systemEventListener = new SystemEventListener();
-        publisherMulticaster.systemEventMulticaster.addListener(systemEventListener);
+        publisherMulticaster.systemEventMulticaster.addListener((BaseEventListener) systemEventListener);
 
         SystemEvent systemEvent = new SystemEvent();
         publisherMulticaster.systemEventMulticaster.publisherEvent(systemEvent);

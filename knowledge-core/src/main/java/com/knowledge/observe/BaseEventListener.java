@@ -1,6 +1,8 @@
 package com.knowledge.observe;
 
-public interface BaseEventListener<E> {
+import com.knowledge.observe.event.BaseEvent;
+
+public interface BaseEventListener<E extends BaseEvent> {
 
     void onTriggerEvent(E event);
 }
