@@ -1,9 +1,7 @@
 package com.knowledge.common.factory.db;
 
-import java.sql.Connection;
+public interface DbFactory<T extends Db> {
 
-public interface DbFactory<T> {
-
-    Connection getConnection(Class<? extends T> clazz);
+    T getDb(Class<? extends T> clazz);
 
 }

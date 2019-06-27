@@ -1,19 +1,21 @@
 package com.knowledge.common.factory.db;
 
-import java.sql.Connection;
+import lombok.extern.log4j.Log4j;
 
-public class GenricDbFactory<T> implements DbFactory<T> {
+@Log4j
+public class GenricDbFactory<T extends Db> implements DbFactory<T> {
 
     @Override
-    public Connection getConnection(Class<? extends T> clazz) {
-        /*if(clazz == null) {
+    public T getDb(Class<? extends T> clazz) {
+        if(clazz == null) {
             return null;
         }
         try {
-            return (T) Class.forName(clazz.getName()).newInstance();
+            T db = (T) Class.forName(clazz.getName()).newInstance();
+            return db;
         } catch (Exception e) {
-            e.printStackTrace();
-        }*/
+            log.error("获取数据库操作对应出错{}", e);
+        }
         return null;
     }
 }
