@@ -8,7 +8,7 @@ import java.util.Map;
 public class DbTest {
 
     public static void main(String[] args) {
-        String dbUrl = "jdbc:mysql://192.168.1.250:3305/callcenter-ksbd?useUnicode=true&amp;characterEncoding=UTF-8";
+        String dbUrl = "jdbc:mysql://192.168.1.250:3305/callcenter-ksbd";
         DbFactory<MysqlDb> factory = new GenricDbFactory<>();
         MysqlDb db = factory.getDb(MysqlDb.class);
         db.init("root", "111111", dbUrl);
