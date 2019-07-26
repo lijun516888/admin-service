@@ -10,11 +10,11 @@ import org.springframework.boot.SpringApplication;
 /**
  * @author qiubo
  */
-@BootApp(sysName = "knowledge", httpPort = 8080)
+@BootApp(sysName = "knowledge", httpPort = 8085)
 public class Main {
     public static void main(String[] args) {
         Apps.setProfileIfNotExists("dev");
-        Apps.setLogPath("/Users/lijun/Work Root/logs/");
+        // Apps.setLogPath("/Users/lijun/Work Root/logs/");
         new SpringApplication(Main.class).run(args);
     }
 }
