@@ -9,8 +9,9 @@ import javax.crypto.SecretKey;
 import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
 import java.nio.charset.Charset;
-import java.security.MessageDigest;
-import java.security.SecureRandom;
+import java.security.*;
+import java.security.interfaces.ECPrivateKey;
+import java.security.interfaces.ECPublicKey;
 
 public class CryptoTest {
 
@@ -38,14 +39,35 @@ public class CryptoTest {
         cipher.init(Cipher.DECRYPT_MODE, keySpec, new IvParameterSpec(Hex.decodeHex(iv.toCharArray())));
         bytes = cipher.doFinal(bytes);
         System.out.println(new String(bytes, Charset.forName("UTF-8")));
-
         // System.out.println(Hex.encodeHexString(secretKey.getEncoded()));
+    }
 
+    @Test
+    public void eccAlgorithm() throws Exception {
+        KeyPairGenerator keyPairGenerator = KeyPairGenerator.getInstance("EC");
+        keyPairGenerator.initialize(112);
+        KeyPair keyPair = keyPairGenerator.generateKeyPair();
+        ECPublicKey aPublic = (ECPublicKey) keyPair.getPublic();
+        ECPrivateKey aPrivate = (ECPrivateKey) keyPair.getPrivate();
+        System.out.println(Hex.encodeHexString(aPublic.getEncoded()));
+        System.out.println(Hex.encodeHexString(aPrivate.getEncoded()));
+    }
+
+    @Test
+    public void generateMessageDigest() throws Exception {
+        String content = "@#$%^&123qwr好";
         MessageDigest digest = MessageDigest.getInstance("MD5");
-        byte[] digest1 = digest.digest(content.getBytes());
-        System.out.println(Hex.encodeHexString(digest1));
+        byte[] digestByte = digest.digest(content.getBytes());
+        System.out.println(Hex.encodeHexString(digestByte));
+    }
 
-
+    @Test
+    public void generateKey() {
+        byte[] keyByte = new byte[16];
+        SecureRandom random = new SecureRandom();
+        random.nextBytes(keyByte);
+        String key = Hex.encodeHexString(keyByte);
+        System.out.println(key);
     }
 
     @Test
