@@ -12,6 +12,7 @@ import java.nio.charset.Charset;
 import java.security.*;
 import java.security.interfaces.ECPrivateKey;
 import java.security.interfaces.ECPublicKey;
+import java.security.spec.PKCS8EncodedKeySpec;
 
 public class CryptoTest {
 
@@ -32,14 +33,38 @@ public class CryptoTest {
         SecretKeySpec keySpec = new SecretKeySpec(Hex.decodeHex(key.toCharArray()), "AES");
         // 获取加密对象
         Cipher cipher = Cipher.getInstance("AES/CBC/PKCS5Padding");
-        cipher.init(Cipher.ENCRYPT_MODE, keySpec, new IvParameterSpec(Hex.decodeHex(iv.toCharArray())));
+        cipher.init(Cipher.ENCRYPT_MODE, keySpec, new IvParameterSpec(new byte[16]));
         byte[] bytes = cipher.doFinal(content.getBytes());
         System.out.println(Hex.encodeHexString(bytes));
 
-        cipher.init(Cipher.DECRYPT_MODE, keySpec, new IvParameterSpec(Hex.decodeHex(iv.toCharArray())));
+        cipher.init(Cipher.DECRYPT_MODE, keySpec, new IvParameterSpec(new byte[16]));
         bytes = cipher.doFinal(bytes);
         System.out.println(new String(bytes, Charset.forName("UTF-8")));
         // System.out.println(Hex.encodeHexString(secretKey.getEncoded()));
+    }
+
+    @Test
+    public void pairKeyTest() throws Exception {
+        String content = "@#$%^&123qwr好";
+
+        KeyPairGenerator keyPairGenerator = KeyPairGenerator.getInstance("DSA");
+        keyPairGenerator.initialize(512);
+        KeyPair keyPair = keyPairGenerator.generateKeyPair();
+        PublicKey aPublic = keyPair.getPublic();
+        PrivateKey aPrivate = keyPair.getPrivate();
+        System.out.println(Hex.encodeHexString(aPublic.getEncoded()));
+        System.out.println(Hex.encodeHexString(aPrivate.getEncoded()));
+
+        PKCS8EncodedKeySpec pkcs8EncodedKeySpec = new PKCS8EncodedKeySpec(aPrivate.getEncoded());
+        KeyFactory keyFactory = KeyFactory.getInstance("DSA");
+        PrivateKey privateKey = keyFactory.generatePrivate(pkcs8EncodedKeySpec);
+
+        Signature signature = Signature.getInstance("SHA1withDSA");
+        signature.initSign(privateKey);
+        signature.update(content.getBytes());
+        byte[] sign = signature.sign();
+        System.out.println(Hex.encodeHexString(sign));
+
     }
 
     @Test
