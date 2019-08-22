@@ -8,11 +8,16 @@ import javax.crypto.KeyGenerator;
 import javax.crypto.SecretKey;
 import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.FileInputStream;
+import java.io.InputStream;
 import java.nio.charset.Charset;
 import java.security.*;
 import java.security.interfaces.ECPrivateKey;
 import java.security.interfaces.ECPublicKey;
 import java.security.spec.PKCS8EncodedKeySpec;
+import java.security.spec.X509EncodedKeySpec;
 
 public class CryptoTest {
 
@@ -106,6 +111,54 @@ public class CryptoTest {
         secureRandom = new SecureRandom();
         secureRandom.nextBytes(key);
         System.out.println(Hex.encodeHexString(key));
+    }
+
+    @Test
+    public void testSignature() throws Exception {
+        // 将明文用散列算法生成消息摘要
+        InputStream inputStream = CryptoTest.class.getResourceAsStream("data.txt");
+        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+        int b;
+        while((b = inputStream.read()) >= 0) {
+            byteArrayOutputStream.write(b);
+        }
+        byte[] content = byteArrayOutputStream.toByteArray();
+        // 生成摘要信息 hash算法 MD5,SHA-1
+        // 1、MD5
+        MessageDigest messageDigest = MessageDigest.getInstance("MD5");
+        byte[] digest = messageDigest.digest(content);
+        System.out.println(String.format("消息摘要：%s", Hex.encodeHexString(digest)));
+        // 使用摘要信息生成签名串
+        // 签名算法ECDSA SHA1withECDSA EC
+        // 生成加密用的公钥和私钥
+        KeyPairGenerator keyPairGenerator = KeyPairGenerator.getInstance("EC"); // 使用ECC算法
+        keyPairGenerator.initialize(128);
+        KeyPair keyPair = keyPairGenerator.generateKeyPair();
+        PrivateKey privateKey = keyPair.getPrivate();
+        PublicKey publicKey = keyPair.getPublic();
+        System.out.println(String.format("私钥：%s", Hex.encodeHexString(privateKey.getEncoded())));
+        System.out.println(String.format("公钥：%s", Hex.encodeHexString(publicKey.getEncoded())));
+        String privateKeyHex = Hex.encodeHexString(privateKey.getEncoded());
+        String publicKeyHex = Hex.encodeHexString(publicKey.getEncoded());
+        // 使用私钥生成签名
+        // 使用PKCS8密钥编码格式规范生成加密密钥
+        PKCS8EncodedKeySpec pkcs8EncodedKeySpec = new PKCS8EncodedKeySpec(Hex.decodeHex(privateKeyHex.toCharArray()));
+        // 获取EC算法的密钥生产工厂
+        KeyFactory keyFactory = KeyFactory.getInstance("EC");
+        PrivateKey privateKey1 = keyFactory.generatePrivate(pkcs8EncodedKeySpec);
+        Signature signature = Signature.getInstance("SHA1withECDSA");
+        signature.initSign(privateKey1);
+        signature.update(digest);
+        byte[] sign = signature.sign();
+        System.out.println(String.format("数字签名：%s", Hex.encodeHexString(sign)));
+
+        // 使用公钥验证签名
+        X509EncodedKeySpec x509EncodedKeySpec = new X509EncodedKeySpec(Hex.decodeHex(publicKeyHex.toCharArray()));
+        PublicKey publicKey1 = keyFactory.generatePublic(x509EncodedKeySpec);
+        signature.initVerify(publicKey1);
+        signature.update(digest);
+        boolean verify = signature.verify(sign);
+        System.out.println(String.format("验签结果：%s", verify));
     }
 
 }
