@@ -1,7 +1,5 @@
 package com.knowledge.utils;
 
-import com.google.common.io.ByteStreams;
-import com.google.common.io.CharStreams;
 import lombok.extern.log4j.Log4j;
 import org.apache.commons.codec.DecoderException;
 import org.apache.commons.codec.binary.Hex;
