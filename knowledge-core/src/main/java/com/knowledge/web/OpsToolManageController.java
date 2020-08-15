@@ -3,10 +3,14 @@ package com.knowledge.web;
 import com.acooly.core.common.dao.support.PageInfo;
 import com.acooly.core.common.web.support.JsonListResult;
 import com.acooly.openapi.tool.util.StringUtils;
+import com.gexin.fastjson.JSONArray;
 import com.gexin.fastjson.JSONObject;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import com.knowledge.dbtool.DbCache;
+import com.knowledge.dbtool.MySqlDataBaseManageService;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -16,9 +20,6 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.sql.Connection;
-import java.sql.DatabaseMetaData;
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -31,11 +32,27 @@ public class OpsToolManageController {
     @Resource
     private JdbcTemplate jdbcTemplate;
 
+    @Resource
+    private RedisTemplate redisTemplate;
+
+    @Resource
+    private MySqlDataBaseManageService mySqlDataBaseManageService;
+
     @RequestMapping({"index"})
     public String index(HttpServletRequest request, HttpServletResponse response) {
-
-
         return "/manage/tool/ops";
+    }
+
+    @ResponseBody
+    @RequestMapping({"test"})
+    public JSONArray test() {
+        try {
+            Map entries = redisTemplate.opsForHash().entries(DbCache.DB_PROPERTY_INFO);
+            return mySqlDataBaseManageService.fetchInfo(jdbcTemplate.getDataSource().getConnection(), false);
+        } catch (Exception throwables) {
+            throwables.printStackTrace();
+        }
+        return null;
     }
 
     /**
@@ -50,25 +67,18 @@ public class OpsToolManageController {
         JSONObject obj = new JSONObject();
         try {
             Connection conn = jdbcTemplate.getDataSource().getConnection();
-            ResultSet rs = null;
-            ResultSet rs1 = null;
-            conn.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
-            DatabaseMetaData meta = conn.getMetaData();
-            rs = meta.getTables(null, null, null, new String[]{"TABLE", "VIEW"});
-            while(rs.next()) {
-                String tableName = rs.getString("TABLE_NAME");
-                System.out.println(tableName);
-                rs1 = meta.getColumns(null, null, tableName.trim(), null);
-                List<String> columns = Lists.newArrayList();
-                while (rs1.next()) {
-                    columns.add(rs1.getString("COLUMN_NAME"));
-                }
-                obj.put(tableName, columns.toArray(new String[] {}));
-            }
-        } catch (SQLException e) {
+            JSONArray objects = mySqlDataBaseManageService.fetchInfo(conn, false);
+            objects.stream().forEach(v -> parseTip((JSONObject) v, obj));
+        } catch (Exception e) {
             log.error("DB操作失败{}", e);
         }
         return obj;
+    }
+
+    private void parseTip(JSONObject o, JSONObject objects) {
+        JSONArray columns = o.getJSONArray("columns");
+        String[] columnNames = (String[]) columns.stream().map(t -> ((JSONObject) t).getString("columnName")).toArray();
+        objects.put(o.getString("tableName"), columnNames);
     }
 
     /**
@@ -81,7 +91,6 @@ public class OpsToolManageController {
     @RequestMapping({"execute"})
     public JsonListResult<Map<String, Object>> execute(HttpServletRequest request, HttpServletResponse response) {
         JsonListResult<Map<String, Object>> result = new JsonListResult<>();
-
         PageInfo<Map<String, Object>> pageInfo = new PageInfo<>();
         pageInfo.setCountOfCurrentPage(10);
         String page = request.getParameter("page");
