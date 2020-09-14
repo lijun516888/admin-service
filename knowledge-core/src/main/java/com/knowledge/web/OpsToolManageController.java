@@ -7,8 +7,6 @@ import com.gexin.fastjson.JSONArray;
 import com.gexin.fastjson.JSONObject;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
-import com.knowledge.dbtool.DbCache;
-import com.knowledge.dbtool.MySqlDataBaseManageService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -35,8 +33,8 @@ public class OpsToolManageController {
     @Resource
     private RedisTemplate redisTemplate;
 
-    @Resource
-    private MySqlDataBaseManageService mySqlDataBaseManageService;
+    /*@Resource
+    private MySqlDataBaseManageService mySqlDataBaseManageService;*/
 
     @RequestMapping({"index"})
     public String index(HttpServletRequest request, HttpServletResponse response) {
@@ -46,12 +44,12 @@ public class OpsToolManageController {
     @ResponseBody
     @RequestMapping({"test"})
     public JSONArray test() {
-        try {
+        /*try {
             Map entries = redisTemplate.opsForHash().entries(DbCache.DB_PROPERTY_INFO);
             return mySqlDataBaseManageService.fetchInfo(jdbcTemplate.getDataSource().getConnection(), false);
         } catch (Exception throwables) {
             throwables.printStackTrace();
-        }
+        }*/
         return null;
     }
 
@@ -64,7 +62,7 @@ public class OpsToolManageController {
     @ResponseBody
     @RequestMapping({"loadDbMeta"})
     public JSONObject loadDbMeta(HttpServletRequest request, HttpServletResponse response) {
-        JSONObject obj = new JSONObject();
+        /*JSONObject obj = new JSONObject();
         try {
             Connection conn = jdbcTemplate.getDataSource().getConnection();
             JSONArray objects = mySqlDataBaseManageService.fetchInfo(conn, false);
@@ -72,13 +70,14 @@ public class OpsToolManageController {
         } catch (Exception e) {
             log.error("DB操作失败{}", e);
         }
-        return obj;
+        return obj;*/
+        return null;
     }
 
     private void parseTip(JSONObject o, JSONObject objects) {
-        JSONArray columns = o.getJSONArray("columns");
+        /*JSONArray columns = o.getJSONArray("columns");
         String[] columnNames = (String[]) columns.stream().map(t -> ((JSONObject) t).getString("columnName")).toArray();
-        objects.put(o.getString("tableName"), columnNames);
+        objects.put(o.getString("tableName"), columnNames);*/
     }
 
     /**
